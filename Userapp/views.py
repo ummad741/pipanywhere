@@ -1,6 +1,8 @@
 from .models import UserMoney
 from django.shortcuts import render
 from .serializers import RegisterSerializer, AllMoneySerializer, User, AllMoney, ChiqimSerializer
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
+from rest_framework.permissions import IsAuthenticated, AllowAny
 # Create your views here.
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -16,12 +18,19 @@ class UserRegisterView(APIView):
         username = request.data.get('user_name')
         password = request.data.get('user_password')
         user = User.objects.create(user_name=username, user_password=password)
+        access = AccessToken.for_user(user)
+        refresh = RefreshToken.for_user(user)
         user.save()
-        return Response({"status": "User created"})
+        return Response({
+            "status": "User created",
+            'access': str(access),
+            'refresh': str(refresh),
+        })
 
 
 class GetObjects(APIView):
     serializer = RegisterSerializer
+    permission_classes = [AllowAny]
 
     def get(self, request):
         user = User.objects.all()
