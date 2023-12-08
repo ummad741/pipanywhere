@@ -4,12 +4,14 @@ from .serializers import RegisterSerializer, AllMoneySerializer, User, AllMoney,
 # Create your views here.
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
 
 
 class UserRegisterView(APIView):
     serializer_class = RegisterSerializer
     queryset = User.objects.all()
 
+    @swagger_auto_schema(request_body=RegisterSerializer)
     def post(self, request):
         username = request.data.get('user_name')
         password = request.data.get('user_password')
