@@ -20,6 +20,15 @@ class UserRegisterView(APIView):
         return Response({"status": "User created"})
 
 
+class GetObjects(APIView):
+    serializer = RegisterSerializer
+
+    def get(self, request):
+        user = User.objects.all()
+        serializer = RegisterSerializer(user, many=True)
+        return Response(serializer.data)
+
+
 class AddMoneyView(APIView):
     serializer_class = AllMoneySerializer
     queryset = AllMoney.objects.all()
